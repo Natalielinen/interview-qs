@@ -2,11 +2,13 @@
 
 ## Оглавление
 1. [Как работают замыкания (closures) в JavaScript?](#closures)
-2. 
+2. [Объясните разницу между var, let и const](#variables)
+3. [Что такое область видимости (scope) в JavaScript?](#scope)
+4. [Как работает Event Loop в JavaScript?](#eventLoop)
+5. [Чем отличаются setTimeout, setInterval и requestAnimationFrame?](#timeout)
 
 
-
-1. <a id="closures">Как работают замыкания (closures) в JavaScript?</a>
+## <a id="closures">Как работают замыкания (closures) в JavaScript?</a>
 
 **Ответ**: Замыкание — это функция, которая запоминает свою внешнюю область видимости, даже если она вызывается вне этой области.
 
@@ -24,7 +26,7 @@ closureExample("World"); // Выведет: Outer: Hello, Inner: World
 
  **Где используется**: Callback-функции, таймеры, модули, функции с приватными переменными.
 
- 2. Объясните разницу между var, let и const
+ ## <a id="variables">Объясните разницу между var, let и const</a> 
 
  | Переменная | Область видимости |	Изменяемость |	Возможность повторного объявления |
  |------------|-------------------|--------------|------------------------------------|
@@ -47,7 +49,7 @@ console.log(y); // 10
 
   ```
 
- 3. Что такое область видимости (scope) в JavaScript?
+ ## <a id="scope">Что такое область видимости (scope) в JavaScript?</a> 
 
  **Ответ**: Область видимости определяет, откуда можно получить доступ к переменным.
 
@@ -71,7 +73,7 @@ console.log(globalVar); // Работает
 
  ```
 
- 4. Как работает Event Loop в JavaScript?
+ ## <a id="eventLoop">Как работает Event Loop в JavaScript?</a>
 
  **Ответ**: JavaScript — однопоточный язык, но с асинхронностью. Event Loop контролирует стек вызовов и очередь задач.
 
@@ -102,7 +104,7 @@ console.log("End");
 
  ```
 
- 5. Чем отличаются setTimeout, setInterval и requestAnimationFrame?
+ ## <a id="timeout">Чем отличаются setTimeout, setInterval и requestAnimationFrame?</a>
 
 - setTimeout(callback, delay) – выполняет код 1 раз через указанное время.
 
