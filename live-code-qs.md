@@ -139,7 +139,7 @@ function f() {
 
 f = f.bind({name: 'Вася'}).bind({name: 'Петя'});
 
-f(); // Выведется Вася, т.к. первый bind привяжет this навсегда (второй bind не переопределяет this)
+f(); // Выведется Вася, т.к. первый bind привяжет this навсегда (второй bind не переопределяет this), call и apply здесь тоже не сработают
 ```
 
 ## <a id="makeCounter">Функция makeCounter</a>
@@ -281,6 +281,11 @@ Promise.race возвращает первый завершившийся про
 ➡️ В данном случае p2 завершится раньше (100мс против 500мс), поэтому Promise.race([p1, p2]) выполнится с результатом "second".
 
 Promise.race возвращает результат самого первого завершённого промиса. В этом примере p2 завершается быстрее, чем p1, поэтому в then попадает значение 'second'. Даже если p1 потом завершится успешно — это уже не повлияет на результат race.
+
+Promise.all() - резолвится если все промисы успешны, если хоть один завалился - rejected (Fulfills when all of the promises fulfill; rejects when any of the promises rejects.)
+Promise.allSettled() - The Promise.allSettled() static method takes an iterable of promises as input and returns a single Promise. This returned promise fulfills when all of the input's promises settle (including when an empty iterable is passed), with an array of objects that describe the outcome of each promise. (даже если какие-то отвалились)
+Promise.any() - Fulfills when any of the promises fulfills; rejects when all of the promises reject.
+Promise.race() - Settles when any of the promises settles. In other words, fulfills when any of the promises fulfills; rejects when any of the promises rejects.
 
 ## <a id="fooTryCatch">foo try/catch</a>
 
