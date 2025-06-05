@@ -12,6 +12,16 @@
 12. [class Test](#classTest)
 13. [Промисы](#promise)
 14. [foo try/catch](#fooTryCatch)
+15. [static](#15)
+16. [Symbol.iterator](#16)
+17. [fetchData](#17)
+18. [Product.prototype](#18)
+19. [Leonardo](#19)
+20. [Promise](#20)
+21. [setTimeout](#21)
+22. [obj a b](#22)
+23. [Set](#23)
+24. [objects compare](#24)
 
 ## <a id="unavailableVariable">Что нужно сделать с первой строчкой, чтобы внутри функции b переменная a стала недоступна?</a>
 
@@ -197,7 +207,6 @@ arr[2]();
 ['a', 'b', ƒ] // сам массив arr
 
 ## <a id="errorParamIsRequired">Ошибка обязательный параметр</a>
-
 ```js
 const isRequired = () => {
   throw new Error('param is required');
@@ -310,3 +319,221 @@ console.log(foo());
 НО если finally тоже содержит return, он ПЕРЕЗАПИШЕТ любое значение из try или catch.
 
 Несмотря на то что в catch возвращается ошибка, блок finally содержит return 42, а он всегда выполняется последним и переопределяет результат из try или catch. Поэтому foo() возвращает 42. Это особенность JavaScript — return в finally имеет высший приоритет.
+
+## <a id="15">static</a>
+
+```js
+class Vehicle {
+  static type() {
+    return "Generic Vehicle";
+  }
+}
+
+class Car extends Vehicle {
+  static type() {
+    return "Car";
+  }
+}
+
+console.log(Car.type());  //Car
+```
+
+В классе Car переопределяется статический метод type, вызвать его можно только из класса, а не из экземпляра. Выведется Car
+
+## <a id="16">Symbol.iterator</a>
+
+```js
+const myObject = {
+  a: 1,
+  b: 2,
+  c: 3,
+  [Symbol.iterator]: function* () {
+    for (let key of Object.keys(this)) {
+      yield this[key];
+    }
+  }
+};
+
+const iter = myObject[Symbol.iterator]();
+console.log(iter.next().value);
+console.log(iter.next().value);
+console.log(iter.next().value);
+```
+
+Делает обычный объект итерируемым (как массив).
+
+При итерации возвращает значения его строковых свойств (1, 2, 3).
+
+В консоли будет выведено: 1, 2, 3
+
+Но есть важная деталь: Object.keys(this) возвращает только обычные (строковые) ключи, символы не включаются. То есть Symbol.iterator не попадает в список ключей.
+
+Это не псевдомассив, т.к у него нет свойства length
+
+## <a id="17">fetchData</a>
+
+```js
+async function fetchData() {
+  let data = 'initial';
+
+  const promise = new Promise((resolve) => {
+    setTimeout(() => {
+      resolve('fetched');
+    }, 1000);
+  });
+
+  promise.then((result) => {
+    data = result;
+  });
+
+  return data;
+}
+
+fetchData().then(console.log);
+```
+
+data изначально — строка 'initial'.
+
+Создаётся Promise, который через 1 секунду вызовет resolve('fetched').
+
+Устанавливается .then(...), в котором будет обновлено значение data → 'fetched'.
+
+Но функция fetchData возвращает data сразу, до того как setTimeout сработает и промис выполнится.
+
+## <a id="18">Product.prototype</a>
+
+```js
+function Product(name, price) {
+  this.name = name;
+  this.price = price;
+}
+
+Product.prototype.discount = function(discount) {
+  this.price -= discount;
+};
+
+const product = new Product('Phone', 500);
+product.discount(50);
+
+console.log(product.price);
+```
+
+Создаётся конструктор Product, который инициализирует объект с полями name и price.
+
+Добавляется метод discount в прототип конструктора, чтобы все экземпляры Product могли его использовать. Метод просто уменьшает цену на переданное значение.
+
+Создается экземпляр product с именем 'Phone' и ценой 500.
+
+Затем вызывается метод discount(50), который уменьшает цену на 50.
+
+После этого console.log выводит новое значение цены. (450)
+
+## <a id="19">Leonardo</a>
+
+```js
+let person = {
+        name: 'Leonardo'
+};
+
+Object.freeze(person);
+person.name = 'Lima';
+
+console.log(person.name);
+```
+
+Помимо значения **`value`**, свойства объекта имеют три специальных атрибута (так называемые «флаги»).
+
+- **`writable`** – если `true`, свойство можно изменить, иначе оно только для чтения.
+- **`enumerable`** – если `true`, свойство перечисляется в циклах, в противном случае циклы его игнорируют.
+- **`configurable`** – если `true`, свойство можно удалить, а эти атрибуты можно изменять, иначе этого делать нельзя.
+
+Запрещает добавлять/удалять/изменять свойства. Устанавливает `configurable: false, writable: false` для всех существующих свойств.
+
+## <a id="20">Promise</a>
+
+```js
+const promise = new Promise((resolve, reject) => {
+  setTimeout(() => resolve(3), 1000);
+});
+
+promise
+  .then(result => {
+    console.log(result); // 3
+    return result * 2; // 6 - не выведет, просто вернет
+  })
+  .then(result => {
+    console.log(result); // 6 в консоль
+    return new Promise(resolve => setTimeout(() => resolve(result * 3), 1000)); // через секунду вернет 18, но не выведет
+  })
+  .then(result => {
+    console.log(result); // а здесь уже через секунду (промис выше) выведет 18
+  });
+
+
+```
+
+## <a id="21">setTimeout</a>
+
+```js
+console.log('Start');
+setTimeout(() => console.log('Timeout 1'), 0);
+setTimeout(() => console.log('Timeout 2'), 0);
+console.log('End');
+```
+не стек, очередь, первый пришел первый вышел
+Start, End, Timeout 1, Timeout 2
+console.log('Start') → выводится сразу
+setTimeout(..., 0) ставит Timeout 1 в очередь макрозадач, которая будет выполнена после завершения основного кода.
+setTimeout(..., 0) ставит Timeout 2 также в очередь макрозадач (сразу после предыдущего).
+
+console.log('End') → выводится сразу
+
+Почему setTimeout(..., 0) не срабатывает сразу?
+Потому что даже при 0 миллисекундах, setTimeout откладывает выполнение в отдельную очередь, которая выполняется после завершения текущего стека вызовов.
+
+## <a id="22">obj a b</a>
+
+```js
+const obj = {
+  a: 1,
+  b: function() {
+    return this.a;
+  }
+};
+const b = obj.b; // Здесь функция b сохраняется отдельно от объекта, и теряет привязку к obj. Вызов b() — это обычный вызов функции, а не метод объекта.
+console.log(b());
+```
+
+Объект obj содержит:
+
+свойство a = 1,
+
+метод b, который возвращает this.a.
+
+Далее происходит присваивание:
+
+В обычном вызове this указывает на:
+
+undefined в строгом режиме ('use strict'),
+
+глобальный объект (window в браузере, global в Node.js) — в нестрогом режиме.
+
+Так как в глобальном объекте скорее всего нет свойства a, то результат: undefined
+
+## <a id="23">Set</a>
+```js
+const set = new Set([1, 1, 2, 3, 4]);
+console.log(set);
+```
+
+Выведет только уникальные значения, сет хранит уникальные значения
+
+## <a id="24">objects compare</a>
+```js
+const a = {};
+const b = {};
+console.log(a == b);
+console.log(a === b);
+```
+
+в обоих случаях false т.к. два объекта никогда не равны
